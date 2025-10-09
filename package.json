@@ -1,7 +1,7 @@
 {
-	"name": "tic-tac-toe",
+	"name": "jogo-sem-velha",
 	"private": true,
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
