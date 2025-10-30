@@ -72,7 +72,10 @@
       {#each row as cell, colIndex}
         <button
           onclick={() => handleClick(rowIndex, colIndex)}
-          class="size-20 md:size-40 flex items-center justify-center text-2xl md:text-4xl font-bold rounded bg-white shadow hover:bg-gray-200 transition hover:cursor-pointer {cell?.player === 'X' ? "text-pink-400" : "text-blue-400"}"
+          class="size-20 md:size-40 flex items-center justify-center text-2xl md:text-4xl font-bold rounded bg-white shadow hover:bg-gray-200 transition hover:cursor-pointer "
+          class:text-blue-400={cell?.player == 'O'}
+          class:text-pink-400={cell?.player == 'X'}
+          class:text-transparent={!cell?.player}
         >
           {cell?.player || ''}
         </button>
