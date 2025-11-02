@@ -1,22 +1,25 @@
 <script lang="ts">
+  type Theme = 'light' | 'dark';
+
+  let theme: Theme = $state("light");
+
   type Player = 'X' | 'O';
   type Cell = { player: Player; timestamp: number } | null;
 
   const size = 3;
-  let board: Cell[][] = Array.from({ length: size }, () => Array(size).fill(null));
-  let currentPlayer: Player = 'X';
-  let turn = 0;
-  let message = 'Vez do jogador X';
+  let board: Cell[][] = $state(Array.from({ length: size }, () => Array(size).fill(null)));
+  let currentPlayer: Player = $state('X');
+  let message = $state('Vez do jogador X');
+  let isGameOver = $derived(message.includes('venceu') || message === 'Empate');
 
   // Para armazenar a ordem dos símbolos de cada jogador
-  let moves: Record<Player, { row: number; col: number; timestamp: number }[]> = {
+  let moves: Record<Player, { row: number; col: number; timestamp: number }[]> = $state({
     X: [],
     O: []
-  };
+  });
 
   function handleClick(row: number, col: number) {
-    if (board[row][col]) return;
-    if (message.includes('venceu') || message === 'Empate') return;
+    if (!isGameOver && board[row][col]) return;
 
     const timestamp = Date.now();
     board[row][col] = { player: currentPlayer, timestamp };
@@ -63,24 +66,44 @@
     currentPlayer = 'X';
     message = 'Vez do jogador X';
   }
+
+  $effect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      theme = e.matches ? 'dark' : 'light';
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    
+    // Configura o tema inicial
+    theme = mediaQuery.matches ? 'dark' : 'light';
+    
+    // Cleanup ao desmontar
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  });
 </script>
 
-<main class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-  <h1 class="text-2xl md:text-4xl font-bold mb-4 md:mb-8">Jogo sem Velha</h1>
-  <div class="grid grid-cols-3 gap-2 md:gap-4 mb-4 md:mb-8">
-    {#each board as row, rowIndex}
-      {#each row as cell, colIndex}
-        <button
-          onclick={() => handleClick(rowIndex, colIndex)}
-          class="size-20 md:size-40 flex items-center justify-center text-2xl md:text-4xl font-bold rounded bg-white shadow hover:bg-gray-200 transition hover:cursor-pointer {cell?.player === 'X' ? "text-pink-400" : "text-blue-400"}"
-        >
-          {cell?.player || ''}
-        </button>
-      {/each}
-    {/each}
-  </div>
-  <p class="mb-4 text-lg md:text-2xl">{message}</p>
-  <button onclick={reset} class="px-4 py-2 md:px-6 md:py-3 md:text-lg bg-pink-200 text-gray-500 rounded hover:bg-pink-300 hover:text-white transition hover:cursor-pointer">
-    Reiniciar
-  </button>
+<main class="flex min-h-screen flex-col items-center justify-center {theme == 'dark' ? 'bg-slate-900 text-slate-100' : 'bg-gray-100 text-gray-800'} p-4">
+  <button class="theme-button" aria-label="Change Theme"></button>
+	<h1 class="text-2xl font-bold md:text-4xl mb-4 md:mb-8">
+		Jogo sem Velha
+	</h1>
+	<div class="mb-4 grid grid-cols-3 gap-2 md:mb-8 md:gap-4">
+		{#each board as row, rowIndex}
+			{#each row as cell, colIndex}
+				<button
+					onclick={() => handleClick(rowIndex, colIndex)}
+					class="flex size-20 items-center justify-center rounded {theme == 'dark' ? 'bg-slate-300' : 'bg-white'} text-2xl font-bold shadow transition hover:cursor-pointer hover:bg-slate-200 md:size-40 md:text-4xl {cell?.player == 'X' ? 'text-pink-400' : 'text-blue-400'}">
+					{cell?.player || ''}
+				</button>
+			{/each}
+		{/each}
+	</div>
+	<p class="mb-4 text-lg md:text-2xl">{message}</p>
+	<button
+		onclick={reset}
+		class="rounded {theme == 'dark' ? 'bg-pink-300 hover:bg-pink-400 text-gray-700': 'bg-pink-200 hover:bg-pink-300'} px-4 py-2 transition hover:cursor-pointer hover:text-white md:px-6 md:py-3 md:text-lg">
+		Reiniciar
+	</button>
 </main>
