@@ -1,7 +1,10 @@
 <script lang="ts">
+  const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+
   type Theme = 'light' | 'dark';
 
   let theme: Theme = $state("light");
+  let isAnimating = $state(false);
 
   type Player = 'X' | 'O';
   type Cell = { player: Player; timestamp: number } | null;
@@ -19,7 +22,8 @@
   });
 
   function handleClick(row: number, col: number) {
-    if (!isGameOver && board[row][col]) return;
+    if (isGameOver) return;
+    if (board[row][col]) return;
 
     const timestamp = Date.now();
     board[row][col] = { player: currentPlayer, timestamp };
@@ -76,16 +80,25 @@
     
     mediaQuery.addEventListener('change', handleChange);
     
-    // Configura o tema inicial
     theme = mediaQuery.matches ? 'dark' : 'light';
     
-    // Cleanup ao desmontar
     return () => mediaQuery.removeEventListener('change', handleChange);
   });
 </script>
 
 <main class="flex min-h-screen flex-col items-center justify-center {theme == 'dark' ? 'bg-slate-900 text-slate-100' : 'bg-gray-100 text-gray-800'} p-4">
-  <button class="theme-button" aria-label="Change Theme"></button>
+  <button 
+    class="theme-button {theme == 'light' ? "bg-[url(/icons/sun.svg)]" : "bg-[url(/icons/moon.svg)]"} {isAnimating ? 'theme-transition' : ''}" 
+    aria-label="Change Theme" 
+    onclick={() => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      isAnimating = true;
+      setTimeout(() => {
+        isAnimating = false;
+      }, 500);
+    }}
+  >
+  </button>
 	<h1 class="text-2xl font-bold md:text-4xl mb-4 md:mb-8">
 		Jogo sem Velha
 	</h1>
@@ -94,7 +107,10 @@
 			{#each row as cell, colIndex}
 				<button
 					onclick={() => handleClick(rowIndex, colIndex)}
-					class="flex size-20 items-center justify-center rounded {theme == 'dark' ? 'bg-slate-300' : 'bg-white'} text-2xl font-bold shadow transition hover:cursor-pointer hover:bg-slate-200 md:size-40 md:text-4xl {cell?.player == 'X' ? 'text-pink-400' : 'text-blue-400'}">
+					class="flex size-20 items-center justify-center rounded {theme == 'dark' ? 'bg-slate-300' : 'bg-white'} text-2xl font-bold shadow transition hover:cursor-pointer hover:bg-slate-200 md:size-40 md:text-4xl"
+          class:text-pink-400={cell?.player == 'X'}
+          class:text-blue-400={cell?.player == 'O'}
+          class:text-transparent={!cell?.player}>
 					{cell?.player || ''}
 				</button>
 			{/each}

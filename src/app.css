@@ -1,15 +1,41 @@
 @import 'tailwindcss';
 
 .theme-button {
-  background-color: red;
-  width: 100px;
-  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 4rem;
+  height: 4rem;
   position: absolute;
   top: 5%;
   right: 2.5%;
+  transition: transform 0.5s ease, background-image 0.3s ease-out;
+  transform-origin: center;
+  cursor: pointer;
+
+  @variant focus {
+    outline: none;
+  }
+
+  @variant hover {
+    transform: rotate(15deg);
+  }
 
   @variant not-md {
     top: 2.5%;
     right: 5%;
+  }
+}
+
+.theme-transition {
+  animation: theme-rotate 0.5s ease-in-out;
+}
+
+@keyframes theme-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
