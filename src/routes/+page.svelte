@@ -86,7 +86,7 @@
   });
 </script>
 
-<main class="flex min-h-screen flex-col items-center justify-center {theme == 'dark' ? 'bg-slate-900 text-slate-100' : 'bg-gray-100 text-gray-800'} p-4">
+<main class="flex min-h-screen flex-col items-center justify-center {theme == 'dark' ? 'bg-slate-900 text-slate-100' : 'bg-orange-400/20 text-gray-800'} p-4">
   <button 
     class="theme-button {theme == 'light' ? "bg-[url(/icons/sun.svg)]" : "bg-[url(/icons/moon.svg)]"} {isAnimating ? 'theme-transition' : ''}" 
     aria-label="Change Theme" 
@@ -107,7 +107,7 @@
 			{#each row as cell, colIndex}
 				<button
 					onclick={() => handleClick(rowIndex, colIndex)}
-					class="flex size-20 items-center justify-center rounded {theme == 'dark' ? 'bg-slate-300' : 'bg-white'} text-2xl font-bold shadow transition hover:cursor-pointer hover:bg-slate-200 md:size-40 md:text-4xl"
+					class="flex size-20 items-center justify-center rounded {theme == 'dark' ? 'bg-slate-300 hover:bg-slate-200' : 'bg-amber-50 hover:bg-amber-100'} text-2xl font-bold shadow transition hover:cursor-pointer md:size-40 md:text-4xl"
           class:text-pink-400={cell?.player == 'X'}
           class:text-blue-400={cell?.player == 'O'}
           class:text-transparent={!cell?.player}>
