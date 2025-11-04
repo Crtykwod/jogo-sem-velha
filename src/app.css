@@ -28,7 +28,7 @@
 }
 
 .theme-transition {
-  animation: theme-rotate 0.5s ease-in-out;
+  animation: theme-rotate 1s ease-in-out;
 }
 
 @keyframes theme-rotate {

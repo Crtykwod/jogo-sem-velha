@@ -95,7 +95,7 @@
       isAnimating = true;
       setTimeout(() => {
         isAnimating = false;
-      }, 500);
+      }, 1100);
     }}
   >
   </button>
